@@ -1,16 +1,28 @@
-module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+const fetch = require("node-fetch");
 
-    if (req.query.name || (req.body && req.body.name)) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
+module.exports = async function(context, req) {
+  const body = req.rawBody;
+
+  if (!body) {
+    context.log("No request body to forward");
+    return;
+  }
+
+  const forwardToUri = "http://requestbin.net/1/1frjgmd1";
+  const fetchOptions = {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/json"
     }
-    else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
+  };
+
+  try {
+    response = await fetch(forwardToUri, fetchOptions);
+    if (!response.ok) {
+      context.log.warn(`Response code indicates failure: ${response.status}`);
     }
+  } catch (err) {
+    context.log.error(err);
+  }
 };
