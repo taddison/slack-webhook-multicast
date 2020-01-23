@@ -1,32 +1,58 @@
 const fetch = require("node-fetch");
 
-module.exports = async function(context, req) {
-  const body = req.rawBody;
+const SLACK_FORWARD_TO_URI = "SLACK_FORWARD_TO_URI";
 
-  if (!body) {
-    context.log("No request body to forward");
+const processMessageForMulticast = async (context, rawBody) => {
+  context.log("Processing multicast message");
+
+  // TODO: Actually process it
+
+  return;
+};
+
+module.exports = async function(context, req) {
+  const { rawBody } = req;
+
+  if (!rawBody) {
+    context.log.warn("No request body to forward");
     return;
   }
 
-  // TODO: Fallback uri should come from config (and be the original Slack endpoint)
-  // TODO: Every post should go the Slack endpoint UNLESS the endpoint is empty (migration complete)
-  // TODO: Try to send the webhook on to a destination based on parsing
+  try {
+    await processMessageForMulticast(context, rawBody);
+  } catch (err) {
+    context.log.error(err);
+  }
 
-  const forwardToUri = "http://requestbin.net/1/1frjgmd1";
-  const fetchOptions = {
+  const slackForwardToUri = process.env[SLACK_FORWARD_TO_URI];
+  if (!slackForwardToUri) {
+    const errorMessage = `Missing config value: ${SLACK_FORWARD_TO_URI}`;
+    context.log.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  if (slackForwardToUri === "DO_NOT_FORWARD") {
+    context.log(`Slack Uri set to DO_NOT_FORWARD, skipping...`);
+    return;
+  }
+
+  const slackForwardOptions = {
     method: "POST",
-    body,
+    body: rawBody,
     headers: {
       "Content-Type": "application/json"
     }
   };
 
   try {
-    response = await fetch(forwardToUri, fetchOptions);
+    context.log(`Forwarding to ${slackForwardToUri}`);
+    response = await fetch(slackForwardToUri, slackForwardOptions);
+
     if (!response.ok) {
       context.log.warn(`Response code indicates failure: ${response.status}`);
     }
   } catch (err) {
     context.log.error(err);
+    throw err;
   }
 };
