@@ -8,6 +8,10 @@ module.exports = async function(context, req) {
     return;
   }
 
+  // TODO: Fallback uri should come from config (and be the original Slack endpoint)
+  // TODO: Every post should go the Slack endpoint UNLESS the endpoint is empty (migration complete)
+  // TODO: Try to send the webhook on to a destination based on parsing
+
   const forwardToUri = "http://requestbin.net/1/1frjgmd1";
   const fetchOptions = {
     method: "POST",
