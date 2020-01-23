@@ -21,10 +21,7 @@ module.exports = async function(context, req) {
 
   const logFullPayload = process.env[LOG_FULL_PAYLOAD];
   if(logFullPayload) {
-    context.log({
-      message: "Full payload",
-      rawBody
-    });
+    context.log(rawBody);
   }
 
   try {
