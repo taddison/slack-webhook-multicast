@@ -3,6 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "SLACK_FORWARD_TO_URI": "http://requestbin.net/someRequestBinUrl"
+    "SLACK_FORWARD_TO_URI": "http://requestbin.net/someRequestBinUrl",
+    "LOG_FULL_PAYLOAD": true
   }
 }

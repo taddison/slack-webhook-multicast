@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 
 const SLACK_FORWARD_TO_URI = "SLACK_FORWARD_TO_URI";
+const LOG_FULL_PAYLOAD = "LOG_FULL_PAYLOAD";
 
 const processMessageForMulticast = async (context, rawBody) => {
   context.log("Processing multicast message");
@@ -16,6 +17,11 @@ module.exports = async function(context, req) {
   if (!rawBody) {
     context.log.warn("No request body to forward");
     return;
+  }
+
+  const logFullPayload = process.env[LOG_FULL_PAYLOAD];
+  if(logFullPayload) {
+    context.log(rawBody);
   }
 
   try {
