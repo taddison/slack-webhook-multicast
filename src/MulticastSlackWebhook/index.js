@@ -27,7 +27,6 @@ module.exports = async function(context, req) {
   const slackForwardToUri = process.env[SLACK_FORWARD_TO_URI];
   if (!slackForwardToUri) {
     const errorMessage = `Missing config value: ${SLACK_FORWARD_TO_URI}`;
-    context.log.error(errorMessage);
     throw new Error(errorMessage);
   }
 
@@ -52,7 +51,6 @@ module.exports = async function(context, req) {
       context.log.warn(`Response code indicates failure: ${response.status}`);
     }
   } catch (err) {
-    context.log.error(err);
     throw err;
   }
 };
